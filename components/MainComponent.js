@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, Platform } from 'react-native';
-import { Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, ToastAndroid } from 'react-native';
 import { Text, ScrollView, SafeAreaView } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer';
@@ -16,7 +17,6 @@ import Reservation from './ReservationComponent';
 import Favorites from './FavoriteComponent';
 import Login from './LoginComponent';
 
-import { DISHES } from '../shared/dishes';
 import { connect } from 'react-redux';
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
 
@@ -177,15 +177,16 @@ const CustomDrawerContentComponent = (props) => (
 );
 
 const MainNavigator = createDrawerNavigator({
-  Login: 
-  { screen: LoginNavigator,
+  Login:
+  {
+    screen: LoginNavigator,
     navigationOptions: {
       title: 'Login',
       drawerLabel: 'Login',
       drawerIcon: ({ tintColor, focused }) => (
         <Icon
           name='sign-in'
-          type='font-awesome'            
+          type='font-awesome'
           size={24}
           iconStyle={{ color: tintColor }}
         />
@@ -304,6 +305,37 @@ class Main extends Component {
     this.props.fetchComments();
     this.props.fetchPromos();
     this.props.fetchLeaders();
+
+    NetInfo.fetch().then((connectionInfo) => {
+      ToastAndroid.show('Initial Network Connectivity Type: '
+          + connectionInfo.type, ToastAndroid.LONG)
+  });
+
+  NetInfo.addEventListener(connectionChange => this.handleConnectivityChange(connectionChange));
+  }
+
+  componentWillUnmount() {
+    const unsubscribe = NetInfo.addEventListener(connectionChange => this.handleConnectivityChange(connectionChange));
+    unsubscribe();
+  }
+
+  handleConnectivityChange = (connectionInfo) => {
+    switch (connectionInfo.type) {
+      case 'none':
+        ToastAndroid.show('You are now offline!', ToastAndroid.LONG);
+        break;
+      case 'wifi':
+        ToastAndroid.show('You are now connected to WiFi!', ToastAndroid.LONG);
+        break;
+      case 'cellular':
+        ToastAndroid.show('You are now connected to Cellular!', ToastAndroid.LONG);
+        break;
+      case 'unknown':
+        ToastAndroid.show('You now have unknown connection!', ToastAndroid.LONG);
+        break;
+      default:
+        break;
+    }
   }
 
   render() {
