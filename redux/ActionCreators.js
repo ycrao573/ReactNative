@@ -1,6 +1,19 @@
 import * as ActionTypes from './ActionTypes';
 import { baseUrl } from '../shared/baseUrl';
 
+
+export const postFavorite = (dishId) => (dispatch) => {
+   setTimeout(() => {
+       dispatch(addFavorite(dishId));
+   }, 2000);
+};
+
+export const addFavorite = (dishId) => ({
+    type: ActionTypes.ADD_FAVORITE,
+    payload: dishId
+});
+
+
 export const fetchComments = () => (dispatch) => {
     return fetch(baseUrl + 'comments')
     .then(response => {
@@ -29,6 +42,24 @@ export const commentsFailed = (errmess) => ({
 export const addComments = (comments) => ({
     type: ActionTypes.ADD_COMMENTS,
     payload: comments
+});
+
+export const postComment = (dishId, rating, author, comment) => (dispatch) => {
+    const _comment = {
+      dishId: dishId,
+      rating: rating,
+      author: author,
+      comment: comment,
+      date: new Date().toISOString()
+  }
+  setTimeout(() => {
+      dispatch(addComment(_comment));
+  }, 2000);
+};
+
+export const addComment = (comment) => ({
+  type: ActionTypes.ADD_COMMENT,
+  payload: comment
 });
 
 export const fetchDishes = () => (dispatch) => {
@@ -69,7 +100,7 @@ export const addDishes = (dishes) => ({
 });
 
 export const fetchPromos = () => (dispatch) => {
-    
+
     dispatch(promosLoading());
 
     return fetch(baseUrl + 'promotions')
@@ -106,11 +137,12 @@ export const addPromos = (promos) => ({
 });
 
 export const fetchLeaders = () => (dispatch) => {
-    
+
     dispatch(leadersLoading());
 
     return fetch(baseUrl + 'leaders')
     .then(response => {
+      console.log('mulx10: '+response);
         if (response.ok) {
             return response;
         } else {
@@ -140,16 +172,4 @@ export const leadersFailed = (errmess) => ({
 export const addLeaders = (leaders) => ({
     type: ActionTypes.ADD_LEADERS,
     payload: leaders
-});
-
-export const postFavorite = (dishId)  => (dispatch) => {
-
-    setTimeout(() => {
-        dispatch(addFavorite(dishId));
-    }, 500);
-};
-
-export const addFavorite = (dishId) => ({
-    type: ActionTypes.ADD_FAVORITE,
-    payload: dishId
 });
