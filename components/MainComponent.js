@@ -13,6 +13,7 @@ import Home from './HomeComponent';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
+import Favorites from './FavoriteComponent';
 
 import { DISHES } from '../shared/dishes';
 import { connect } from 'react-redux';
@@ -112,7 +113,24 @@ const HomeNavigator = createStackNavigator({
 const ReservationNavigator = createStackNavigator({
     Reservation: { screen: Reservation }
   }, {
-    navigationOptions: ({ navigation }) => ({
+    defaultNavigationOptions: ({ navigation }) => ({
+        headerStyle: {
+            backgroundColor: "#512DA8"
+        },
+        headerTitleStyle: {
+            color: "#fff"
+        },
+        headerTintColor: "#fff",
+      headerLeft: <Icon name="menu" size={24}
+        iconStyle={{ color: 'white' }} 
+        onPress={() => navigation.toggleDrawer()} />    
+    })
+  })
+
+  const FavoritesNavigator = createStackNavigator({
+    Favorites: { screen: Favorites }
+  }, {
+    defaultNavigationOptions: ({ navigation }) => ({
       headerStyle: {
           backgroundColor: "#512DA8"
       },
@@ -122,10 +140,10 @@ const ReservationNavigator = createStackNavigator({
       headerTintColor: "#fff",
       headerLeft: <Icon name="menu" size={24}
         iconStyle={{ color: 'white' }} 
-        onPress={ () => navigation.navigate('DrawerToggle') } />    
+        onPress={() => navigation.toggleDrawer()} />    
     })
   })
-
+  
 const CustomDrawerContentComponent = (props) => (
     <ScrollView>
         <View style={styles.drawerHeader}>
@@ -213,6 +231,21 @@ const MainNavigator = createDrawerNavigator({
         drawerIcon: ({ tintColor, focused }) => (
           <Icon
             name='cutlery'
+            type='font-awesome'            
+            size={24}
+            iconStyle={{ color: tintColor }}
+          />
+        ),
+      }
+    },
+    Favorites:
+    { screen: FavoritesNavigator,
+      navigationOptions: {
+        title: 'My Favorites',
+        drawerLabel: 'My Favorites',
+        drawerIcon: ({ tintColor, focused }) => (
+          <Icon
+            name='heart'
             type='font-awesome'            
             size={24}
             iconStyle={{ color: tintColor }}
