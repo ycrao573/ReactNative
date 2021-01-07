@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder, Share } from 'react-native';
 import { Dimensions } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
@@ -24,6 +24,16 @@ const mapDispatchToProps = dispatch => ({
 
 function RenderDish(props) {
     const dish = props.dish;
+
+    const shareDish = (title, message, url) => {
+        Share.share({
+            title: title,
+            message: title + ': ' + message + ' ' + url,
+            url: url
+        }, {
+            dialogTitle: 'Share ' + title
+        })
+    }
 
     var viewRef;
     const handleViewRef = ref => viewRef = ref;
@@ -77,6 +87,15 @@ function RenderDish(props) {
                     <View style={styles.formRow}>
                         <Icon raised reverse name={props.favorite ? 'heart' : 'heart-o'} type='font-awesome' color='#f50' onPress={() => props.favorite ? console.log('Already favorite') : props.onPress()} />
                         <Icon raised reverse name={'pencil'} type='font-awesome' color='#512DA8' onPress={() => props.onComment()} />
+                        <Icon
+                            raised
+                            reverse
+                            name='share'
+                            type='font-awesome'
+                            color='#51D2A8'
+                            style={styles.cardItem}
+                            onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)} />
+
                     </View>
                 </Card>
             </Animatable.View>
@@ -226,7 +245,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         flex: 1,
-        marginLeft: Dimensions.get('window').width / 4
+        marginLeft: Dimensions.get('window').width / 6
     },
     modalText: {
         fontSize: 18,
