@@ -29,10 +29,13 @@ function RenderDish(props) {
     const handleViewRef = ref => viewRef = ref;
 
     const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
-        if (dx < -200)
-            return true;
-        else
-            return false;
+        if (dx < -200) return true;
+        else return false;
+    }
+
+    const recognizeComment = ({ moveX, moveY, dx, dy }) => {
+        if (dx > 200) return true;
+        else return false;
     }
 
     const panResponder = PanResponder.create({
@@ -54,7 +57,8 @@ function RenderDish(props) {
                     ],
                     { cancelable: false }
                 );
-
+            if (recognizeComment(gestureState))
+                props.onComment();
             return true;
         }
     })
@@ -156,7 +160,6 @@ class Dishdetail extends Component {
             this.state.author,
             this.state.comment);
     }
-
 
     render() {
         const dishId = this.props.navigation.getParam('dishId', '');
